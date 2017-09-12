@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         fragmentManager.beginTransaction()
                 .replace(R.id.frame_layout, listRSSFragment)
-                .addToBackStack("list")
+                .addToBackStack("listFragment")
                 .commit()
 
 

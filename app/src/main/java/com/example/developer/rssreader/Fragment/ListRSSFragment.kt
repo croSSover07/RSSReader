@@ -8,10 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.developer.rssreader.Adapter.FeedAdapter
-import com.example.developer.rssreader.HTTPDataHandler
+import com.example.developer.rssreader.DataHelper
+
 import com.example.developer.rssreader.Model.RSSRoot
 import com.example.developer.rssreader.R
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_list_rss.*
 
 
@@ -20,7 +20,9 @@ import kotlinx.android.synthetic.main.fragment_list_rss.*
  * Created by developer on 11.09.17.
  */
 class ListRSSFragment :Fragment(){
-    private val RSS_link="https://www.reddit.com/r/Kotlin/.rss";
+    //private val RSS_link="https://www.reddit.com/r/Kotlin/.rss";
+    private val RSS_link="https://www.reddit.com/r/news/.rss";
+
     private val RSS_to_JSON_API=" https://api.rss2json.com/v1/api.json?rss_url=";
 
     override fun onCreateView(inflater: LayoutInflater , container: ViewGroup, savedInstanceState: Bundle?): View {
@@ -33,38 +35,27 @@ class ListRSSFragment :Fragment(){
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val linearLayoutManager= LinearLayoutManager( activity.applicationContext, LinearLayoutManager.VERTICAL,false)
         recyclerView.layoutManager=linearLayoutManager
-        loadRSS()
+        loadRSSToRecycler()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun loadRSS() {
+    private fun loadRSSToRecycler(){
+       val asyncTask=object : AsyncTask<Void,Void,RSSRoot>(){
+           override fun doInBackground(vararg p0: Void?): RSSRoot? {
+               val dataHelper=DataHelper()
+               val  rssRoot=dataHelper.GetRSSRoot()
+               return rssRoot
+           }
 
-        val loadRSSAsync=object: AsyncTask<String, String, String>(){
+           override fun onPostExecute(rssRoot: RSSRoot) {
+               val adapter= FeedAdapter(rssRoot,activity)
+               recyclerView.adapter=adapter
+               adapter.notifyDataSetChanged()
+           }
+       }
+        asyncTask.execute()
 
-            override fun onPostExecute(result: String?) {
-
-                var rssRoot: RSSRoot
-                rssRoot= Gson().fromJson<RSSRoot>(result, RSSRoot::class.java!!)
-                val adapter= FeedAdapter(rssRoot,activity)
-                recyclerView.adapter=adapter
-                adapter.notifyDataSetChanged()
-            }
-
-            override fun onPreExecute() {
-
-            }
-
-            override fun doInBackground(vararg p0: String): String? {
-                val result:String?
-                val http= HTTPDataHandler()
-                result=http.GetHTTPHandler(p0[0])
-                return result
-            }
-        }
-
-        val url_get_data=StringBuilder(RSS_to_JSON_API)
-        url_get_data.append(RSS_link)
-        loadRSSAsync.execute(url_get_data.toString())
     }
+
 
 }

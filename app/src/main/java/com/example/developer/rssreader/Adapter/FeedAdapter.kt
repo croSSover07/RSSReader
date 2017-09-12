@@ -37,7 +37,6 @@ class FeedAdapter(private val RSSRoot:RSSRoot,private val mContext:Context):Recy
             if(!isLongClick){
                 //new fragment
                 Log.i(TAG,"click")
-
                 val rssRootGson=Gson().toJson(RSSRoot.items[position],Item::class.java!!)
                 var bundle = Bundle()
                 bundle.putString("item",rssRootGson)
@@ -48,8 +47,6 @@ class FeedAdapter(private val RSSRoot:RSSRoot,private val mContext:Context):Recy
                 fragmentTransaction.replace(R.id.frame_layout, noteRSSFragment, "tag")
                 fragmentTransaction.addToBackStack(null)
                 fragmentTransaction.commit()
-
-
             }
         })
     }
