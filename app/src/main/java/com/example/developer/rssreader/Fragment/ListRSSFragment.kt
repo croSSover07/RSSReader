@@ -2,12 +2,14 @@ package com.example.developer.rssreader.Fragment
 
 import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.developer.rssreader.Adapter.FeedAdapter2
 import com.example.developer.rssreader.DataHelper
+import com.example.developer.rssreader.Model.Entry
 import com.example.developer.rssreader.R
 import kotlinx.android.synthetic.main.fragment_list_rss.*
 
@@ -29,21 +31,30 @@ class ListRSSFragment :Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val linearLayoutManager= LinearLayoutManager( activity.applicationContext, LinearLayoutManager.VERTICAL,false)
         recyclerView.layoutManager=linearLayoutManager
-        loadRSSToRecycler()
+        refreshItems()
+        swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
+            refreshItems()
+        })
+
+
         super.onViewCreated(view, savedInstanceState)
     }
 
-
-
-
-
-    private fun loadRSSToRecycler(){
+    private fun refreshItems() {
         val dataHelper=DataHelper()
-        val adapter= FeedAdapter2(dataHelper.GetListEntry(),activity)
+
+        onItemsLoadComplete(dataHelper.GetListEntry());
+    }
+
+    fun onItemsLoadComplete( list:List<Entry>) {
+        val adapter= FeedAdapter2(list,activity)
         recyclerView.adapter=adapter
         adapter.notifyDataSetChanged()
-
+        swiperefreshlayout.setRefreshing(false)
     }
+
+
+ 
 
 
 
