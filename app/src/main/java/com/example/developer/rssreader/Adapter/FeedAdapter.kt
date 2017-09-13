@@ -1,7 +1,6 @@
 package com.example.developer.rssreader.Adapter
 
 import android.app.Activity
-import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
@@ -10,18 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.developer.rssreader.Fragment.ListRSSFragment
 import com.example.developer.rssreader.Fragment.NoteRSSFragment
 import com.example.developer.rssreader.Interface.ItemClickListener
-import com.example.developer.rssreader.Model.Item
-import com.example.developer.rssreader.Model.RSSRoot
+import com.example.developer.rssreader.Model.Entry
 import com.example.developer.rssreader.R
 import com.google.gson.Gson
 
 /**
  * Created by developer on 11.09.17.
  */
-class FeedAdapter(private val RSSRoot:RSSRoot,private val mContext:Context):RecyclerView.Adapter<FeedViewHolder>(){
+class FeedAdapter2(private val listEntry:List<Entry>, private val mContext:Context):RecyclerView.Adapter<FeedViewHolder>(){
     private val TAG="FeedAdapter"
     private val inflater: LayoutInflater
 
@@ -30,16 +27,17 @@ class FeedAdapter(private val RSSRoot:RSSRoot,private val mContext:Context):Recy
     }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
-        holder.txtTitle.text=RSSRoot.items[position].title
+
+        holder.txtTitle.text= listEntry[position].title
 
 
         holder.setItemClickListener(ItemClickListener{view,position,isLongClick ->
             if(!isLongClick){
                 //new fragment
                 Log.i(TAG,"click")
-                val rssRootGson=Gson().toJson(RSSRoot.items[position],Item::class.java!!)
+                val rssRootGson= Gson().toJson(listEntry[position],Entry::class.java!!)
                 var bundle = Bundle()
-                bundle.putString("item",rssRootGson)
+                bundle.putString("entry",rssRootGson)
                 val noteRSSFragment = NoteRSSFragment()
                 noteRSSFragment.arguments=bundle
                 val fragmentManager= (mContext as Activity).fragmentManager
@@ -51,9 +49,7 @@ class FeedAdapter(private val RSSRoot:RSSRoot,private val mContext:Context):Recy
         })
     }
 
-    override fun getItemCount(): Int {
-        return RSSRoot.items.size
-    }
+    override fun getItemCount(): Int = listEntry.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FeedViewHolder {
         val itemView=inflater.inflate(R.layout.layout_row,parent,false)
@@ -65,7 +61,7 @@ class FeedViewHolder(itemView: View):RecyclerView.ViewHolder(itemView),View.OnCl
 
     var txtTitle:TextView
 
-     private var itemClickListener:ItemClickListener?=null
+    private var itemClickListener:ItemClickListener?=null
 
     init{
         txtTitle=itemView.findViewById(R.id.textView_title_row)
@@ -79,7 +75,7 @@ class FeedViewHolder(itemView: View):RecyclerView.ViewHolder(itemView),View.OnCl
     }
 
     override fun onClick(v: View) {
-         itemClickListener!!.onClick(v,adapterPosition,false)
+        itemClickListener!!.onClick(v,adapterPosition,false)
     }
 
     override fun onLongClick(v: View ): Boolean {

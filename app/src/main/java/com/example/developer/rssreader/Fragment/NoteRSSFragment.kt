@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.developer.rssreader.Model.Item
+import com.example.developer.rssreader.Model.Entry
 
 import com.example.developer.rssreader.R
 import com.google.gson.Gson
@@ -25,15 +25,12 @@ class NoteRSSFragment: Fragment(){
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
 
-        if(arguments.getString("item")!=null) {
-            val item: Item
-
-            item= Gson().fromJson(arguments.getString("item"), Item::class.java!!)
-
-            textView_title_note.setText( item.title)
-            textView_content_note.setText( item.content)
+        if(arguments.getString("entry")!=null) {
+            val entry: Entry
+            entry= Gson().fromJson(arguments.getString("entry"), Entry::class.java!!)
+            textView_title_note.setText( entry.title)
+            textView_content_note.setText( entry.content)
         }
-
         super.onViewCreated(view, savedInstanceState)
     }
 
