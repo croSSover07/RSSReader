@@ -1,31 +1,27 @@
 package com.example.developer.rssreader
 
-import android.app.Fragment
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import com.example.developer.rssreader.Fragment.ListRSSFragment
+import android.support.v4.app.Fragment
+import com.example.developer.rssreader.activity.BaseActivity
+import com.example.developer.rssreader.fragment.ListRSSFragment
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
+//    private var listRSSFragment: ListRSSFragment? = null
+// TODO: нет необходимости хранить ссылку на фрагмент, так как мы его не используем в дальнейшем.
 
-
-
-    private var listRSSFragment: ListRSSFragment?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if(savedInstanceState==null) {
-            listRSSFragment = Fragment.instantiate(this@MainActivity, ListRSSFragment::class.java!!.getName()) as ListRSSFragment
-            fragmentManager.beginTransaction()
-                    .replace(R.id.frame_layout, listRSSFragment)
-                    .commit()
-        }else{
-            // do nothing - fragment is recreated automatically
+
+        if (fragmentInContainer(R.id.frame_layout) == null) {
+            replaceFragment(R.id.frame_layout, ListRSSFragment())
         }
-
-
     }
 
+    fun replaceMainFragment(fragment: Fragment, addToBackStack: Boolean = false, backStackName: String? = null) {
+        replaceFragment(R.id.frame_layout, fragment, addToBackStack, backStackName)
+    }
 
 }

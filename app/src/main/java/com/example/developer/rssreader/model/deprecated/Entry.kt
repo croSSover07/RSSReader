@@ -1,9 +1,7 @@
-package com.example.developer.rssreader.Model
+package com.example.developer.rssreader.model.deprecated
 
 import java.io.Serializable
 
-/**
- * Created by developer on 13.09.17.
- */
+@Deprecated(message = "Deprecated")
 class Entry(val title:String?, val link:String?, val content:String?):Serializable
 
