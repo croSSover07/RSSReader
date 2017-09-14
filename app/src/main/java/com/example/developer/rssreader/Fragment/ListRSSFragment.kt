@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import com.example.developer.rssreader.Adapter.FeedAdapter
 import com.example.developer.rssreader.DataHelper
 import com.example.developer.rssreader.Model.Entry
-
 import com.example.developer.rssreader.R
 import kotlinx.android.synthetic.main.fragment_list_rss.*
 
@@ -28,6 +27,17 @@ class ListRSSFragment :Fragment() {
         dataHelper= DataHelper()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG,"onCreate")
+        super.onCreate(savedInstanceState)
+
+        if(savedInstanceState!=null) {
+            dataHelper=savedInstanceState[KEY] as DataHelper
+        }
+        else{
+
+        }
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -44,6 +54,7 @@ class ListRSSFragment :Fragment() {
         super.onViewStateRestored(savedInstanceState)
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
         Log.i(TAG,"onCreateView")
         val view=inflater.inflate(R.layout.fragment_list_rss,container,false)
@@ -55,14 +66,13 @@ class ListRSSFragment :Fragment() {
         val linearLayoutManager= LinearLayoutManager( activity.applicationContext, LinearLayoutManager.VERTICAL,false)
         recyclerView.layoutManager=linearLayoutManager
 
-        if (savedInstanceState!=null)
-        {
-            dataHelper=savedInstanceState[KEY] as DataHelper
-            onItemsLoadComplete(dataHelper.listEntry)
+        if (dataHelper.listEntry==null){
+            refreshItems()
         }
         else{
-                refreshItems()
+            onItemsLoadComplete(dataHelper.listEntry)
         }
+
         swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
             refreshItems()
         })
