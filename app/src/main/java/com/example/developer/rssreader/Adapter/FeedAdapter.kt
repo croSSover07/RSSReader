@@ -18,7 +18,7 @@ import com.google.gson.Gson
 /**
  * Created by developer on 11.09.17.
  */
-class FeedAdapter2(private val listEntry:List<Entry>, private val mContext:Context):RecyclerView.Adapter<FeedViewHolder>(){
+class FeedAdapter(private val listEntry:List<Entry>?, private val mContext:Context):RecyclerView.Adapter<FeedViewHolder>(){
     private val TAG="FeedAdapter"
     private val inflater: LayoutInflater
 
@@ -28,7 +28,7 @@ class FeedAdapter2(private val listEntry:List<Entry>, private val mContext:Conte
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
 
-        holder.txtTitle.text= listEntry[position].title
+        holder.txtTitle.text= listEntry!![position].title
 
 
         holder.setItemClickListener(ItemClickListener{view,position,isLongClick ->
@@ -42,14 +42,14 @@ class FeedAdapter2(private val listEntry:List<Entry>, private val mContext:Conte
                 noteRSSFragment.arguments=bundle
                 val fragmentManager= (mContext as Activity).fragmentManager
                 val fragmentTransaction = fragmentManager.beginTransaction()
-                fragmentTransaction.replace(R.id.frame_layout, noteRSSFragment, "tag")
-                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.replace(R.id.frame_layout, noteRSSFragment )
+                fragmentTransaction.addToBackStack("list")
                 fragmentTransaction.commit()
             }
         })
     }
 
-    override fun getItemCount(): Int = listEntry.size
+    override fun getItemCount(): Int = listEntry!!.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): FeedViewHolder {
         val itemView=inflater.inflate(R.layout.layout_row,parent,false)

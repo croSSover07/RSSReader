@@ -4,12 +4,14 @@ import android.app.Fragment
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.developer.rssreader.Adapter.FeedAdapter2
+import com.example.developer.rssreader.Adapter.FeedAdapter
 import com.example.developer.rssreader.DataHelper
 import com.example.developer.rssreader.Model.Entry
+
 import com.example.developer.rssreader.R
 import kotlinx.android.synthetic.main.fragment_list_rss.*
 
@@ -19,42 +21,69 @@ import kotlinx.android.synthetic.main.fragment_list_rss.*
  */
 class ListRSSFragment :Fragment() {
 
+    private val TAG="ListRSSFragment"
+    private val KEY="datahelper"
+    private var dataHelper:DataHelper
+    init {
+        dataHelper= DataHelper()
+    }
 
 
-    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup, savedInstanceState: Bundle?): View {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.i(TAG,"onSaveInstanceState")
+        outState.putSerializable(KEY,dataHelper)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        Log.i(TAG,"onViewStateRestored")
+        if(savedInstanceState!=null)
+        {
+            dataHelper=savedInstanceState[KEY] as DataHelper
+        }
+        super.onViewStateRestored(savedInstanceState)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+        Log.i(TAG,"onCreateView")
         val view=inflater.inflate(R.layout.fragment_list_rss,container,false)
-
-
         return view
      }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        Log.i(TAG,"onViewCreated")
         val linearLayoutManager= LinearLayoutManager( activity.applicationContext, LinearLayoutManager.VERTICAL,false)
         recyclerView.layoutManager=linearLayoutManager
-        refreshItems()
+
+        if (savedInstanceState!=null)
+        {
+            dataHelper=savedInstanceState[KEY] as DataHelper
+            onItemsLoadComplete(dataHelper.listEntry)
+        }
+        else{
+                refreshItems()
+        }
         swiperefreshlayout.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener {
             refreshItems()
         })
-
-
         super.onViewCreated(view, savedInstanceState)
     }
 
     private fun refreshItems() {
-        val dataHelper=DataHelper()
-
-        onItemsLoadComplete(dataHelper.GetListEntry());
+        Log.i(TAG,"-----------refreshItems")
+        onItemsLoadComplete(dataHelper.GetListEntry())
     }
 
-    fun onItemsLoadComplete( list:List<Entry>) {
-        val adapter= FeedAdapter2(list,activity)
+    fun onItemsLoadComplete( list:List<Entry>?) {
+        Log.i(TAG,"-----------onItemsLoadComplete")
+        val adapter= FeedAdapter(list,activity)
         recyclerView.adapter=adapter
         adapter.notifyDataSetChanged()
         swiperefreshlayout.setRefreshing(false)
     }
 
 
- 
+
 
 
 
